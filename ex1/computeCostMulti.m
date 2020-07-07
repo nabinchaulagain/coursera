@@ -12,11 +12,10 @@ J = 0;
 % ====================== YOUR CODE HERE ======================
 % Instructions: Compute the cost of a particular choice of theta
 %               You should set J to the cost.
-
-
-
-
-
+prediction = X * theta;
+err = prediction - y;
+J = (err' * err);
+J = (1/(2*m)) * J;
 % =========================================================================
 
 end
