@@ -1,4 +1,4 @@
-function gradientDescent(X,y,theta,alpha,epochs)
+theta = function gradientDescent(X,y,theta,alpha,epochs)
 costHistory = zeros(epochs);
 m = length(y);
 grad = zeros(length(theta));
