@@ -21,7 +21,7 @@ Theta1 = reshape(nn_params(1:hidden_layer_size * (input_layer_size + 1)), ...
 
 Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):end), ...
                  num_labels, (hidden_layer_size + 1));
-
+            
 % Setup some useful variables
 m = size(X, 1);
          
@@ -39,6 +39,21 @@ Theta2_grad = zeros(size(Theta2));
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
 %
+
+yVec = vectorizeY(y,num_labels);
+for i=1:m,
+    currX = [1, X(i,:)];
+    z2 = Theta1*currX';
+    a2 = [1;sigmoid(z2)];
+    z3 = Theta2*a2;
+    a3 = sigmoid(z3);
+    sigma = 0;
+    for j=1:num_labels, 
+        sigma += yVec(i,j)*log(a3(j)) + (1-yVec(i,j))*log(1-a3(j));
+    end
+    J += sigma;
+end
+J = (-1/m) * J;
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
@@ -54,6 +69,21 @@ Theta2_grad = zeros(size(Theta2));
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
+for t = 1:m
+	a1 = [1; X(t,:)'];
+	z2 = Theta1 * a1;
+	a2 = [1; sigmoid(z2)];
+	z3 = Theta2 * a2;
+	a3 = sigmoid(z3);
+	yy = ([1:num_labels]==y(t))';
+	delta_3 = a3 - yy;
+	delta_2 = (Theta2' * delta_3) .* [1; sigmoidGradient(z2)];
+	delta_2 = delta_2(2:end); 
+	Theta1_grad = Theta1_grad + delta_2 * a1';
+	Theta2_grad = Theta2_grad + delta_3 * a2';
+end
+Theta2_grad = (1/m) * Theta2_grad; 
+Theta1_grad = (1/m) * Theta1_grad;
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
@@ -61,7 +91,14 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+Theta1_grad =  Theta1_grad + (lambda/m) * [zeros(size(Theta1, 1), 1) Theta1(:,2:end)];
+Theta2_grad = Theta2_grad + (lambda/m) * [zeros(size(Theta2, 1), 1) Theta2(:,2:end)];
 
+t1 = Theta1(:,2:size(Theta1,2));
+t2 = Theta2(:,2:size(Theta2,2));
+
+regPrime = (sum(sum(Theta1(:,2:end).^2)) + sum(sum(Theta2(:,2:end).^2))) * (lambda/(2*m));
+J = J + regPrime;
 
 
 
