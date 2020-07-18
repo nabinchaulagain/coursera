@@ -52,7 +52,23 @@ error_val   = zeros(m, 1);
 %
 
 % ---------------------- Sample Solution ----------------------
+for i =1 :m,
+    currX = X(1:i,:);
+    currY = y(1:i);
+    [theta] = trainLinearReg(currX,currY,lambda);
+    [errorTraining] = linearRegCostFunction(currX,currY,theta,0);
+    [errorValidation] = linearRegCostFunction(Xval,yval,theta,0);
+    error_train(i) = errorTraining;
+    error_val(i) = errorValidation;
+end
 
+% hold on;
+% xlabel("training size");
+% ylabel("cost/error");
+% mPoints = linspace(1,m,m);
+% plot(mPoints,error_train);
+% plot(mPoints,error_val);
+% legend({"Training error","Validation error"});
 
 
 
