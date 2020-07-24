@@ -20,7 +20,19 @@ idx = zeros(size(X,1), 1);
 %
 % Note: You can use a for-loop over the examples to compute this.
 %
-
+for  i = 1: size(X,1),  
+  curr = X(i,:);
+  minValInd = 1;
+  minVal = norm(curr - centroids(1,:));
+  for j = 2: K,
+    dist = norm(curr - centroids(j,:));
+    if dist <= minVal,
+      minValInd = j;
+      minVal = dist;
+    end
+  end
+  idx(i) = minValInd;
+end
 
 
 
